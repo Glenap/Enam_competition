@@ -1,24 +1,20 @@
-# Paid persistent demo configuration. Review Render's displayed price before creation.
+# Free demo. Local SQLite data is ephemeral and can disappear on restart.
 services:
   - type: web
     name: finn-investment-research
     runtime: python
     repo: https://github.com/Glenap/Enam_competition
     branch: main
-    plan: starter
+    plan: free
     autoDeployTrigger: "off"
     buildCommand: pip install -r requirements.txt
     startCommand: python server.py --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
-    disk:
-      name: finn-data
-      mountPath: /var/data/finn
-      sizeGB: 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.8
       - key: FINN_DATA_DIR
-        value: /var/data/finn
+        value: /tmp/finn-data
       - key: FINN_REQUIRE_AUTH
         value: "1"
       - key: FINN_DEMO_PASSWORD

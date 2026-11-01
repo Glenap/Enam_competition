@@ -9,7 +9,7 @@ A mobile-first investment intelligence prototype for the ENAM AI Engineer Build 
 .venv/bin/python server.py --host 127.0.0.1 --port 8000
 ```
 
-Open the server in your browser. The default binding is local. For a hosted demo use `--host 0.0.0.0 --port "$PORT"` behind a platform HTTPS proxy. Use a persistent disk for `data/`. This is a single-user prototype. The Render configuration requires a private demo password; broader use also needs per-user authorization, upload quotas and production serving.
+Open the server in your browser. The default binding is local. For a hosted demo use `--host 0.0.0.0 --port "$PORT"` behind a platform HTTPS proxy. Use persistent storage when available; Render’s free plan uses temporary data storage. This is a single-user prototype. The Render configuration requires a private demo password; broader use also needs per-user authorization, upload quotas and production serving.
 
 ## Try it
 
@@ -42,4 +42,4 @@ See `docs/RESEARCH.md`, `docs/ARCHITECTURE.md`, `docs/COVERING_NOTE.md`, `docs/S
 
 ## Deployment
 
-The tested Render Blueprint in `render.yaml` uses a paid Starter service, a 1 GB persistent disk and generated password protection. Automatic deploys are off. Follow `docs/DEPLOYMENT.md` for account connection and hosted smoke/persistence checks. A connected Render account is still required; no deployment URL exists yet.
+The tested Render Blueprint in `render.yaml` uses a free web service with temporary storage and generated password protection. Uploaded documents and ingestion history can disappear after a restart or redeploy, and polling pauses while the service sleeps. Automatic deploys are off. Follow `docs/DEPLOYMENT.md` for access details and hosted smoke checks. A connected Render account is still required; no deployment URL exists yet.
