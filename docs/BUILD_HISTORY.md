@@ -14,3 +14,5 @@ Attach the actual conversation export/share link separately. Do not represent th
 
 8. Added Render deployment configuration. Chromium tests found decorative navigation icons were included in accessible button names; marked them aria-hidden and reran successfully. Captured mobile and desktop screenshots.
 9. Saved source-domain additions in the cloud configuration draft; runtime access remains unchanged until settings are applied. GitHub GraphQL permission inspection returned Forbidden; native Git read succeeded.
+
+10. Pushed to https://github.com/Glenap/Enam_competition on main. A fresh clone installed its dependencies and passed all eight core tests. Render deployment, live-source validation and submission remain blocked on account access, network settings and an authentic conversation export.

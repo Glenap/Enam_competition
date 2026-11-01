@@ -10,7 +10,7 @@
 - [x] Automated Chromium checks at mobile and desktop widths; mobile screenshot visually reviewed.
 - [ ] Test on a physical phone.
 - [ ] Deploy with HTTPS, persistent data and appropriate access protection.
-- [ ] Push repository and verify clone/setup from a clean environment.
+- [x] Pushed to GitHub main; fresh clone installed dependencies and passed all eight tests.
 - [ ] Export/share the actual AI conversation; BUILD_HISTORY.md is only a summary.
 - [ ] Replace placeholders in covering note and verify every claim.
 - [ ] Send to the address in the brief, only after explicit user authorisation to send.
