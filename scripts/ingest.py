@@ -2,9 +2,8 @@
 """Run from the repository root: python -m scripts.ingest [--ticker TCS]."""
 import argparse
 import json
-import time
-from finn.core import ROOT
-from finn.ingestion import poll
+import threading
+from finn.ingestion import poll, run_worker
 
 if __name__ == '__main__':
  parser = argparse.ArgumentParser(description=__doc__)
@@ -13,10 +12,13 @@ if __name__ == '__main__':
  args = parser.parse_args()
  if args.interval and args.interval < 900:
   parser.error('--interval must be 0 or at least 900')
- (ROOT / 'data').mkdir(exist_ok=True)
- while True:
+ if args.interval:
+  stop = threading.Event()
+  try:
+   run_worker(args.interval, stop, args.ticker)
+  except KeyboardInterrupt:
+   stop.set()
+ else:
   failures = poll(args.ticker)
   print(json.dumps({'failures': failures}), flush=True)
-  if not args.interval:
-   raise SystemExit(bool(failures))
-  time.sleep(args.interval)
+  raise SystemExit(bool(failures))

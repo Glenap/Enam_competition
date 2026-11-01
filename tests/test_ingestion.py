@@ -24,7 +24,8 @@ class IngestionTests(unittest.TestCase):
    ingest('TCS', 'announcements', self.path)
   with storage(self.path) as con:
    self.assertEqual(con.execute('SELECT count(*) FROM live_items').fetchone()[0], 3)
-  result = digest(self.path)
+  result = digest(self.path, hours=48)
+  self.assertEqual({i['id'] for i in digest(self.path)['items']}, {'123', 'old'})
   self.assertEqual([i['id'] for i in result['items']], ['123'])
   self.assertEqual(result['mode'], 'live')
 
@@ -61,6 +62,7 @@ class IngestionTests(unittest.TestCase):
   with patch('finn.providers.announcements', return_value=[self.filing(symbol='OTHER')]):
    ingest('OTHER', 'announcements', self.path)
   self.assertEqual(digest(self.path)['items'], [])
+  self.assertEqual(digest(self.path)['ingestion'], [])
 
  def test_missing_exchange_id_is_stable_across_response_order(self):
   first = self.filing(None)

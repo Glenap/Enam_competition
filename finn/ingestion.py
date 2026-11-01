@@ -53,7 +53,7 @@ def ingest(symbol, kind, path=None, price=4, volume=2):
   raise
 
 
-def digest(path=None, hours=48):
+def digest(path=None, hours=168):
  now = dt.datetime.now(dt.timezone.utc)
  cutoff = now - dt.timedelta(hours=hours)
  with storage(path) as con:
@@ -61,17 +61,31 @@ def digest(path=None, hours=48):
   status = [dict(row) for row in con.execute('SELECT * FROM ingestion_status ORDER BY ticker,kind')]
  items = [json.loads(row['payload']) for row in rows]
  universe = {symbol for symbol, _, _ in PORTFOLIO}
+ status = [entry for entry in status if entry['ticker'] in universe]
  items = [item for item in items if item['ticker'] in universe and cutoff <= dt.datetime.fromisoformat(item['timestamp']) <= now]
  items.sort(key=lambda item: (item['priority'], item['timestamp']), reverse=True)
  return {'mode': 'live', 'items': items, 'ingestion': status, 'as_of': now.isoformat()}
 
 
-def poll(symbols=None, path=None):
+def poll(symbols=None, path=None, stop_event=None):
  failures = []
  for symbol in symbols or [row[0] for row in PORTFOLIO]:
   for kind in ('announcements', 'prices'):
+   if stop_event is not None and stop_event.is_set():
+    return failures
    try:
     ingest(symbol, kind, path)
    except Exception:
     failures.append({'ticker': symbol, 'kind': kind})
  return failures
+
+
+def run_worker(interval, stop_event, symbols=None, path=None):
+ """Poll immediately, then wait interruptibly; keep upstream failures isolated."""
+ if interval < 900:
+  raise ValueError('Polling interval must be at least 900 seconds')
+ while not stop_event.is_set():
+  failures = poll(symbols, path, stop_event)
+  print(json.dumps({'ingestion_failures': failures}), flush=True)
+  if stop_event.wait(interval):
+   break

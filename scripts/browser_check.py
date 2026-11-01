@@ -9,10 +9,15 @@ with sync_playwright() as p:
  errors=[]
  page.on('pageerror',lambda e:errors.append(str(e)))
  page.goto('http://127.0.0.1:8000',wait_until='networkidle')
- page.locator('#digest .card').first.wait_for()
- assert page.locator('#digest .card').count()==4
- page.get_by_role('button',name='3 days',exact=True).click()
- assert page.locator('#digest .card').count()==5
+ page.wait_for_function("document.querySelector('#event-count').textContent.includes('signals')")
+ feed=page.request.get('http://127.0.0.1:8000/api/digest').json()
+ assert feed['mode']=='live'
+ for label,hours in [('24 hours',24),('3 days',72),('7 days',168)]:
+  page.get_by_role('button',name=label,exact=True).click()
+  expected=page.evaluate('(args)=>args.items.filter(e=>e.category!=="Routine" && (Date.now()-new Date(e.timestamp))/3600000<=args.hours).length',{'items':feed['items'],'hours':hours})
+  assert page.locator('#digest .card').count()==expected
+ assert page.locator('#digest a').count()==page.locator('#digest .card').count()
+ page.get_by_role('button',name='24 hours',exact=True).click()
  assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
  (ROOT/'artifacts').mkdir(exist_ok=True)
  page.screenshot(path=str(ROOT/'artifacts/mobile-digest.png'),full_page=True,animations='disabled')

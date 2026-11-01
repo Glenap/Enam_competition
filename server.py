@@ -4,10 +4,11 @@ import base64
 import io
 import json
 import math
+import threading
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse,parse_qs
 from finn.core import ROOT, PORTFOLIO, add_document, research, db
-from finn.ingestion import ingest, digest
+from finn.ingestion import ingest, digest, run_worker
 
 class Handler(BaseHTTPRequestHandler):
  def send(self,status,data,ctype='application/json'):
@@ -59,9 +60,32 @@ class Handler(BaseHTTPRequestHandler):
   except (ValueError,TypeError,KeyError) as e: self.send(400,{'error':str(e)})
   except Exception: self.send(400,{'error':'Could not read this document. Try a text-based PDF or a UTF-8 text file.'})
 
-if __name__=='__main__':
- parser=argparse.ArgumentParser(); parser.add_argument('--host',default='127.0.0.1'); parser.add_argument('--port',type=int,default=8000); args=parser.parse_args()
- (ROOT/'data').mkdir(exist_ok=True)
+def main():
+ parser=argparse.ArgumentParser()
+ parser.add_argument('--host',default='127.0.0.1')
+ parser.add_argument('--port',type=int,default=8000)
+ parser.add_argument('--poll-interval',type=int,default=900,help='Seconds between portfolio polls; 0 disables the built-in worker')
+ args=parser.parse_args()
+ if args.poll_interval != 0 and args.poll_interval < 900:
+  parser.error('--poll-interval must be 0 or at least 900')
  with db(): pass
- print(f'FINN listening on {args.host}:{args.port}',flush=True)
- ThreadingHTTPServer((args.host,args.port),Handler).serve_forever()
+ server=ThreadingHTTPServer((args.host,args.port),Handler)
+ stop=threading.Event()
+ worker=None
+ if args.poll_interval:
+  worker=threading.Thread(target=run_worker,args=(args.poll_interval,stop),daemon=True,name='portfolio-ingestion')
+  worker.start()
+ print(f'FINN listening on {args.host}:{server.server_port}',flush=True)
+ try:
+  server.serve_forever()
+ except KeyboardInterrupt:
+  pass
+ finally:
+  stop.set()
+  server.server_close()
+  if worker is not None:
+   worker.join(timeout=2)
+
+
+if __name__=='__main__':
+ main()

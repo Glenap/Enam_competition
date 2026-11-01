@@ -1,5 +1,6 @@
 import datetime as dt
 import hashlib
+import os
 import re
 import sqlite3
 from pathlib import Path
@@ -10,7 +11,7 @@ PORTFOLIO = [
  ('HDFCBANK','HDFC Bank','Banking'),('ICICIBANK','ICICI Bank','Banking'),
  ('INFY','Infosys','IT'),('BHARTIARTL','Bharti Airtel','Telecom'),
  ('ITC','ITC','Consumer'),('LT','Larsen & Toubro','Industrials'),
- ('SUNPHARMA','Sun Pharma','Healthcare'),('TATAMOTORS','Tata Motors','Auto'),
+ ('SUNPHARMA','Sun Pharma','Healthcare'),('TMPV','Tata Motors Passenger Vehicles','Auto'),
  ('TITAN','Titan','Consumer'),('ASIANPAINT','Asian Paints','Materials'),
  ('NTPC','NTPC','Utilities'),('TRENT','Trent','Retail'),
  ('DIXON','Dixon Technologies','Electronics'),('POLYCAB','Polycab India','Industrials'),
@@ -46,7 +47,7 @@ def alerts(closes, volumes, price_threshold=4, volume_threshold=2):
  'volume_ratio':round(ratio,2) if ratio is not None else None,'triggers':triggers}
 
 def db(path=None):
- target = Path(path) if path else ROOT/'data'/'finn.sqlite'
+ target = Path(path) if path else Path(os.environ.get('FINN_DATA_DIR', str(ROOT/'data')))/'finn.sqlite'
  target.parent.mkdir(parents=True, exist_ok=True)
  con=sqlite3.connect(target, timeout=30)
  con.row_factory=sqlite3.Row

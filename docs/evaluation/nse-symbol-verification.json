@@ -1,0 +1,17 @@
+{
+  "source": "https://nsearchives.nseindia.com/content/equities/EQUITY_L.csv",
+  "checked_on": "2026-11-01",
+  "securities": [
+    {"symbol": "TMPV", "company": "Tata Motors Passenger Vehicles Limited", "isin": "INE155A01022", "listing_date": "22-JUL-1998"},
+    {"symbol": "TMCV", "company": "Tata Motors Limited", "isin": "INE1TAE01010", "listing_date": "12-NOV-2025"}
+  ],
+  "portfolio_decision": "Replace the legacy TATAMOTORS mock holding with TMPV, explicitly named Tata Motors Passenger Vehicles. Preserve all historical records under their original symbols; do not merge histories.",
+  "live_verification": {
+    "symbol": "TMPV",
+    "announcements_stored": 2804,
+    "latest_completed_bar": "2026-10-30T03:45:00+00:00",
+    "close": 265.3999938964844,
+    "currency": "INR",
+    "price_source": "https://finance.yahoo.com/quote/TMPV.NS"
+  }
+}

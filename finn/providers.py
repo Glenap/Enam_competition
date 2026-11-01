@@ -7,6 +7,12 @@ import urllib.parse
 import urllib.request
 from .core import ticker, classify, PRIORITY, alerts
 
+def market_symbol(value):
+ symbol = ticker(value)
+ if symbol.removesuffix('.NS') == 'TATAMOTORS':
+  raise ValueError('TATAMOTORS is a legacy NSE symbol. Choose TMPV (Tata Motors Passenger Vehicles) or TMCV (Tata Motors); histories are not merged.')
+ return symbol
+
 _cache={}
 def fetch(url,opener=None):
  if url in _cache and time.time()-_cache[url][0]<900: return _cache[url][1]
@@ -20,7 +26,7 @@ def fetch(url,opener=None):
  return data
 
 def prices(symbol,price_threshold=4,volume_threshold=2):
- symbol=ticker(symbol)
+ symbol=market_symbol(symbol)
  yahoo=symbol if symbol.endswith(('.NS','.BO')) else symbol+'.NS'
  result=fetch('https://query1.finance.yahoo.com/v8/finance/chart/'+urllib.parse.quote(yahoo)+'?range=3mo&interval=1d')['chart']
  if result.get('error'): raise ValueError(result['error'].get('description','Price source error'))
@@ -34,7 +40,7 @@ def prices(symbol,price_threshold=4,volume_threshold=2):
  return dict(output,ticker=symbol,close=rows[-1][1],as_of=dt.datetime.fromtimestamp(rows[-1][0],dt.timezone.utc).isoformat(),source='https://finance.yahoo.com/quote/'+urllib.parse.quote(yahoo),currency=chart['meta'].get('currency'),baseline_days=min(20,len(rows)-1),bars=[dict(as_of=dt.datetime.fromtimestamp(t,dt.timezone.utc).isoformat(),close=c,volume=v) for t,c,v in rows])
 
 def announcements(symbol):
- symbol=ticker(symbol).removesuffix('.NS')
+ symbol=market_symbol(symbol).removesuffix('.NS')
  if symbol.endswith('.BO'): raise ValueError('This filing adapter supports NSE symbols; BSE filings are not implemented.')
  opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
  with opener.open(urllib.request.Request('https://www.nseindia.com',headers={'User-Agent':'Mozilla/5.0'}),timeout=15) as response: response.read(1024)
