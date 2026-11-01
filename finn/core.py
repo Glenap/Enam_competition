@@ -30,6 +30,7 @@ def ticker(value):
 
 def classify(text):
  text = text.lower()
+ if any(word in text for word in CATEGORIES['Routine']): return 'Routine'
  return next((cat for cat,words in CATEGORIES.items() if any(w in text for w in words)), 'Other')
 
 def alerts(closes, volumes, price_threshold=4, volume_threshold=2):
@@ -45,7 +46,9 @@ def alerts(closes, volumes, price_threshold=4, volume_threshold=2):
  'volume_ratio':round(ratio,2) if ratio is not None else None,'triggers':triggers}
 
 def db(path=None):
- con=sqlite3.connect(path or ROOT/'data'/'finn.sqlite')
+ target = Path(path) if path else ROOT/'data'/'finn.sqlite'
+ target.parent.mkdir(parents=True, exist_ok=True)
+ con=sqlite3.connect(target, timeout=30)
  con.row_factory=sqlite3.Row
  con.execute('CREATE TABLE IF NOT EXISTS documents (id TEXT PRIMARY KEY, ticker TEXT, title TEXT, kind TEXT, source TEXT, text TEXT, created TEXT)')
  return con

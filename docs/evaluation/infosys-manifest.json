@@ -1,0 +1,22 @@
+[
+  {
+    "ticker": "INFY",
+    "title": "Infosys Integrated Annual Report 2024-25",
+    "kind": "Annual report",
+    "source": "https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-25.pdf",
+    "file": "annual.pdf",
+    "question": "performance revenues operating margin free cash flow",
+    "expected_quote": "6.1% growth Y-o-Y",
+    "expected_page": 15
+  },
+  {
+    "ticker": "INFY",
+    "title": "Infosys Q4 FY2025 earnings call",
+    "kind": "Earnings transcript",
+    "source": "https://www.infosys.com/investors/reports-filings/quarterly-results/2024-2025/q4/documents/transcripts/earningscall.pdf",
+    "file": "transcript.pdf",
+    "question": "guidance growth financial year constant currency margin",
+    "expected_quote": "our guidance for growth for financial year '26 is 0% to 3% in constant currency terms.",
+    "expected_page": 4
+  }
+]

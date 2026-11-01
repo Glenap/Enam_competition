@@ -10,9 +10,9 @@ AI build history: [ADD AUTHENTIC CONVERSATION EXPORT OR SHARE LINK]
 
 I chose a small Python/SQLite backend and a dependency-light web interface. Research works from user-uploaded annual reports and transcripts, using extractive retrieval without inference costs. It abstains when evidence is absent.
 
-The current digest is simulated and clearly labelled. Yahoo/NSE adapters are implemented, but source access was blocked by the build environment’s network policy and remains unverified. Automated document discovery, notifications, generative research and financial comparisons are deliberately outside this version. Eight core tests and automated mobile/desktop browser checks pass. The repository has been pushed. Live ingestion validation and Render deployment still require network access and a connected hosting account.
+The digest reads persistent exchange disclosures, with routine items collapsed and direct source links. A polling worker stores filings and completed EOD bars; manual checks persist data too. Actual TCS NSE and Yahoo ingestion succeeded. Page-cited research was checked against Infosys’s FY2025 annual report and Q4 earnings transcript, with reproducible manifests and PDF hashes. Sixteen automated tests and HTTP smoke checks pass. Automated document discovery, push notifications, generative research and financial comparisons remain outside this version. Hosting and persistent-disk deployment still require a connected account.
 
-The next iteration would connect real portfolio filings to the digest, validate structured financial extraction, and compare guidance with realised results over four quarters.
+The next iteration would validate structured financial extraction, and compare guidance with realised results over four quarters.
 
 Regards,
 [YOUR NAME]

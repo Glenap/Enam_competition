@@ -11,7 +11,9 @@ class CoreTests(unittest.TestCase):
  def test_symbols(self):
   self.assertEqual(ticker('m&m.ns'),'M&M.NS')
   with self.assertRaises(ValueError): ticker('../etc/passwd')
- def test_routine(self): self.assertEqual(classify('Closure of trading window'),'Routine')
+ def test_routine(self):
+  self.assertEqual(classify('Closure of trading window'),'Routine')
+  self.assertEqual(classify('Newspaper publication of financial results'),'Routine')
  def test_retrieval_and_isolation(self):
   with tempfile.TemporaryDirectory() as temp:
    path=Path(temp)/'test.sqlite'

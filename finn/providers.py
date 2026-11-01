@@ -28,23 +28,25 @@ def prices(symbol,price_threshold=4,volume_threshold=2):
  rows=[(t,c,v) for t,c,v in zip(chart['timestamp'],quote['close'],quote['volume']) if c is not None and v is not None]
  # Yahoo's final daily bar can be intraday. Exclude today until 16:00 India time.
  india=dt.timezone(dt.timedelta(hours=5,minutes=30)); now=dt.datetime.now(india)
- rows=[row for row in rows if dt.datetime.fromtimestamp(row[0],india).date()<now.date() or now.hour>=16]
+ rows=[row for row in rows if dt.datetime.fromtimestamp(row[0],india).date()<now.date() or (dt.datetime.fromtimestamp(row[0],india).date()==now.date() and now.hour>=16)]
  if len(rows)<2: raise ValueError('Insufficient completed daily bars')
  output=alerts([r[1] for r in rows],[r[2] for r in rows],price_threshold,volume_threshold)
- return dict(output,ticker=symbol,close=rows[-1][1],as_of=dt.datetime.fromtimestamp(rows[-1][0],dt.timezone.utc).isoformat(),source='https://finance.yahoo.com/quote/'+urllib.parse.quote(yahoo),currency=chart['meta'].get('currency'),baseline_days=min(20,len(rows)-1))
+ return dict(output,ticker=symbol,close=rows[-1][1],as_of=dt.datetime.fromtimestamp(rows[-1][0],dt.timezone.utc).isoformat(),source='https://finance.yahoo.com/quote/'+urllib.parse.quote(yahoo),currency=chart['meta'].get('currency'),baseline_days=min(20,len(rows)-1),bars=[dict(as_of=dt.datetime.fromtimestamp(t,dt.timezone.utc).isoformat(),close=c,volume=v) for t,c,v in rows])
 
 def announcements(symbol):
  symbol=ticker(symbol).removesuffix('.NS')
  if symbol.endswith('.BO'): raise ValueError('This filing adapter supports NSE symbols; BSE filings are not implemented.')
  opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
  with opener.open(urllib.request.Request('https://www.nseindia.com',headers={'User-Agent':'Mozilla/5.0'}),timeout=15) as response: response.read(1024)
- data=fetch('https://www.nseindia.com/api/corporate-announcements?index=equities&symbol='+urllib.parse.quote(symbol),opener)
+ source_url='https://www.nseindia.com/api/corporate-announcements?index=equities&symbol='+urllib.parse.quote(symbol)
+ data=fetch(source_url,opener)
  output=[]
  for item in data:
+  if item.get('symbol') != symbol: continue
   title=item.get('desc','')+' — '+item.get('attchmntText','')
   cat=classify(title)
   date=item.get('an_dt','')
   try: timestamp=dt.datetime.strptime(date,'%d-%b-%Y %H:%M:%S').replace(tzinfo=dt.timezone(dt.timedelta(hours=5,minutes=30))).isoformat()
   except ValueError: timestamp=None
-  output.append(dict(id=str(item.get('seq_id',len(output))),ticker=symbol,title=title,summary='Read the exchange filing to assess materiality.',category=cat,priority=PRIORITY[cat],timestamp=timestamp,raw_date=date,source=item.get('attchmntFile'),demo=False))
+  output.append(dict(id=str(item['seq_id']) if item.get('seq_id') is not None else None,ticker=symbol,title=title,summary='Read the exchange filing to assess materiality.',category=cat,priority=PRIORITY[cat],timestamp=timestamp,raw_date=date,source=item.get('attchmntFile') if str(item.get('attchmntFile','')).startswith('https://') else source_url,attachment_available=str(item.get('attchmntFile','')).startswith('https://'),demo=False))
  return output

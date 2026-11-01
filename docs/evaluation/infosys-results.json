@@ -1,0 +1,18 @@
+[
+  {
+    "title": "Infosys Integrated Annual Report 2024-25",
+    "source": "https://www.infosys.com/investors/reports-filings/annual-report/annual/documents/infosys-ar-25.pdf",
+    "sha256": "a2b9acdfbe79586ffdbe1780c4f14e5b2630743a4c81ee626f812f4c2fff1b44",
+    "page": 15,
+    "quote": "6.1% growth Y-o-Y",
+    "status": "passed"
+  },
+  {
+    "title": "Infosys Q4 FY2025 earnings call",
+    "source": "https://www.infosys.com/investors/reports-filings/quarterly-results/2024-2025/q4/documents/transcripts/earningscall.pdf",
+    "sha256": "2e4ccd145dd8a746cfcf4ac3ba8b23ca2080f90da1072a8d6010b968abe37e4e",
+    "page": 4,
+    "quote": "our guidance for growth for financial year '26 is 0% to 3% in constant currency terms.",
+    "status": "passed"
+  }
+]

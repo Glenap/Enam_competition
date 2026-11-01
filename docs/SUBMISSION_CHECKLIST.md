@@ -4,9 +4,9 @@
 - [x] 18-company mock universe and arbitrary-symbol research input.
 - [x] Primary-document PDF/text ingestion and page-cited retrieval.
 - [x] Core tests and HTTP smoke checks.
-- [ ] Enable source access and validate real prices and exchange filings.
-- [ ] Ingest actual annual reports and transcripts; verify citations manually.
-- [ ] Replace simulated digest with validated live ingestion if claiming live push.
+- [x] Validate actual TCS prices and exchange disclosures (see LIVE_INGESTION.md).
+- [x] Validate actual Infosys annual-report and earnings-transcript citations; record PDF hashes and evaluation manifests.
+- [x] Connect digest to persistent live filings. Polling is available; push notifications are not implemented.
 - [x] Automated Chromium checks at mobile and desktop widths; mobile screenshot visually reviewed.
 - [ ] Test on a physical phone.
 - [ ] Deploy with HTTPS, persistent data and appropriate access protection.
@@ -15,4 +15,4 @@
 - [ ] Replace placeholders in covering note and verify every claim.
 - [ ] Send to the address in the brief, only after explicit user authorisation to send.
 
-The supplied brief states a deadline of Sunday, 1 November 2026, without a time or timezone. No deployment, push or email submission was performed by this build.
+The supplied brief states a deadline of Sunday, 1 November 2026, without a time or timezone. No deployment or email submission was performed. Git publication is recorded in BUILD_HISTORY.md.

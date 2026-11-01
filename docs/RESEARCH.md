@@ -27,3 +27,7 @@ Priority is a deterministic type heuristic, not materiality analysis: results 90
 ## Next useful research
 
 Obtain two real annual reports and four earnings transcripts for one company, verify publication dates and page references, and build a manually reviewed evaluation set. Validate extraction units, consolidated versus standalone reporting, fiscal periods and management guidance before attempting automated QoQ/YoY comparisons. Confirm the current exchange symbols for the illustrative ad-hoc company chips; listings and names can change.
+
+## Follow-up validation — 1 November 2026
+
+The preceding access results describe the original build. Public internet now works through the approved execution path. Actual NSE TCS disclosures and Yahoo daily bars were ingested durably. Actual Infosys FY2025 annual report and Q4 FY2025 earnings transcript were downloaded from links on the issuer investor pages. Two manually selected verbatim quote/page cases passed extraction and retrieval validation. See LIVE_INGESTION.md and evaluation/infosys-results.json for precise sources, hashes, page numbering and limits. This validates citation retrieval, not financial-table extraction or investment conclusions.
