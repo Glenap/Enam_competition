@@ -19,7 +19,7 @@ Documents are content-hashed by symbol + text. PDF pages use form-feed separator
 
 ## Operational limits
 
-Local single-user tool, no authentication or tenant separation. All uploads are visible to users of the same server. Do not upload confidential documents to a shared instance. PDF parsing is bounded by request bytes and page count, but not isolated by CPU/memory quotas. A production deployment needs sandboxed parsing, auth, per-user document scopes, provider rate limiting, structured error logging, cache eviction and a worker queue. The development HTTP server is not production-hardened.
+Single-user tool, no tenant separation. Optional HTTP Basic authentication protects all routes except GET /api/health when FINN_DEMO_PASSWORD is configured; FINN_REQUIRE_AUTH=1 makes hosted startup fail closed without a password of at least 16 characters. The Render Blueprint enables both and generates the password. Local startup can remain unprotected without those settings. All uploads are visible to users of the same server. Do not upload confidential documents to a shared instance. PDF parsing is bounded by request bytes and page count, but not isolated by CPU/memory quotas. A production deployment needs sandboxed parsing, individual accounts, per-user document scopes, provider rate limiting, structured error logging, cache eviction and a worker queue. The development HTTP server is not production-hardened.
 
 The source URL is a citation only and is never server-fetched, avoiding arbitrary URL-fetch SSRF. Browser output is escaped; citation links allow HTTPS only. A restrictive CSP prohibits external scripts and framing. No credentials or document content are printed by application logging.
 

@@ -9,7 +9,7 @@ A mobile-first investment intelligence prototype for the ENAM AI Engineer Build 
 .venv/bin/python server.py --host 127.0.0.1 --port 8000
 ```
 
-Open the server in your browser. The default binding is local. For a hosted demo use `--host 0.0.0.0 --port "$PORT"` behind a platform HTTPS proxy. Use a persistent disk for `data/`. This is a single-user prototype: add authentication, upload rate limits and production serving before exposing it to untrusted users.
+Open the server in your browser. The default binding is local. For a hosted demo use `--host 0.0.0.0 --port "$PORT"` behind a platform HTTPS proxy. Use a persistent disk for `data/`. This is a single-user prototype. The Render configuration requires a private demo password; broader use also needs per-user authorization, upload quotas and production serving.
 
 ## Try it
 
@@ -25,7 +25,7 @@ Open the server in your browser. The default binding is local. For a hosted demo
 node --check web/app.js
 ```
 
-Twenty-one automated tests pass, including durable ingestion, source-failure retention, worker cancellation, and configurable storage. Chromium checks pass at 390px mobile and 1440px desktop widths against live filings: all three digest windows, upload, page-cited retrieval, saved settings and portfolio. No JavaScript errors or mobile horizontal overflow were observed. Updated screenshots are in `artifacts/`; repeat with `.venv/bin/python scripts/browser_check.py` in a Playwright-equipped environment with the server running on port 8000.
+Twenty-seven automated tests pass, including durable ingestion, source-failure retention, worker cancellation, configurable storage, deployment authentication and restart persistence. Chromium checks pass at 390px mobile and 1440px desktop widths against live filings: all three digest windows, upload, page-cited retrieval, saved settings and portfolio. No JavaScript errors or mobile horizontal overflow were observed. Updated screenshots are in `artifacts/`; repeat with `.venv/bin/python scripts/browser_check.py` in a Playwright-equipped environment with the server running on port 8000.
 
 ## Current boundaries
 
@@ -42,4 +42,4 @@ See `docs/RESEARCH.md`, `docs/ARCHITECTURE.md`, `docs/COVERING_NOTE.md`, `docs/S
 
 ## Deployment
 
-Render was selected for the demo. Use `render.yaml` and `docs/DEPLOYMENT.md`. A connected hosting account is still required; no deployment URL exists yet.
+The tested Render Blueprint in `render.yaml` uses a paid Starter service, a 1 GB persistent disk and generated password protection. Automatic deploys are off. Follow `docs/DEPLOYMENT.md` for account connection and hosted smoke/persistence checks. A connected Render account is still required; no deployment URL exists yet.

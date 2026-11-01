@@ -1,11 +1,25 @@
+# Paid persistent demo configuration. Review Render's displayed price before creation.
 services:
   - type: web
     name: finn-investment-research
     runtime: python
-    plan: free
+    repo: https://github.com/Glenap/Enam_competition
+    branch: main
+    plan: starter
+    autoDeployTrigger: "off"
     buildCommand: pip install -r requirements.txt
     startCommand: python server.py --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
+    disk:
+      name: finn-data
+      mountPath: /var/data/finn
+      sizeGB: 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.8
+      - key: FINN_DATA_DIR
+        value: /var/data/finn
+      - key: FINN_REQUIRE_AUTH
+        value: "1"
+      - key: FINN_DEMO_PASSWORD
+        generateValue: true

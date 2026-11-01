@@ -4,6 +4,10 @@ import base64
 import io
 import json
 import math
+import os
+import hmac
+import binascii
+import signal
 import threading
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse,parse_qs
@@ -11,14 +15,29 @@ from finn.core import ROOT, PORTFOLIO, add_document, research, db
 from finn.ingestion import ingest, digest, run_worker
 
 class Handler(BaseHTTPRequestHandler):
- def send(self,status,data,ctype='application/json'):
+ def send(self,status,data,ctype='application/json',headers=None):
   body=json.dumps(data).encode() if ctype=='application/json' else data
   self.send_response(status); self.send_header('Content-Type',ctype); self.send_header('Content-Length',str(len(body)))
   self.send_header('X-Content-Type-Options','nosniff'); self.send_header('Cache-Control','no-store')
   self.send_header('Content-Security-Policy',"default-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; img-src 'self' data:; frame-ancestors 'none'")
+  for name,value in (headers or {}).items(): self.send_header(name,value)
   self.end_headers(); self.wfile.write(body)
+ def authorized(self):
+  password=os.environ.get('FINN_DEMO_PASSWORD','')
+  required=os.environ.get('FINN_REQUIRE_AUTH')=='1'
+  if not password and not required: return True
+  expected=('finn:'+password).encode('utf-8')
+  try:
+   scheme,credential=self.headers.get('Authorization','').split(' ',1)
+   supplied=base64.b64decode(credential,validate=True) if scheme.lower()=='basic' else b''
+  except (ValueError,binascii.Error):
+   supplied=b''
+  if password and hmac.compare_digest(supplied,expected): return True
+  self.send(401,{'error':'Authentication required.'},headers={'WWW-Authenticate':'Basic realm="FINN demo", charset="UTF-8"'})
+  return False
  def do_GET(self):
   parsed=urlparse(self.path); q=parse_qs(parsed.query)
+  if parsed.path!='/api/health' and not self.authorized(): return
   try:
    if parsed.path=='/api/health': return self.send(200,{'status':'ok'})
    if parsed.path=='/api/portfolio': return self.send(200,[dict(ticker=s,name=n,sector=c) for s,n,c in PORTFOLIO])
@@ -41,6 +60,7 @@ class Handler(BaseHTTPRequestHandler):
   except ValueError as e: self.send(400,{'error':str(e)})
   except Exception: self.send(502,{'error':'Public source unavailable or returned an unsupported response. Previously stored records are retained; retry later or upload primary documents.'})
  def do_POST(self):
+  if not self.authorized(): return
   try:
    size=int(self.headers.get('Content-Length','0'))
    if not 0<size<=12000000: return self.send(413,{'error':'Request must be between 1 byte and 12 MB.'})
@@ -68,6 +88,11 @@ def main():
  args=parser.parse_args()
  if args.poll_interval != 0 and args.poll_interval < 900:
   parser.error('--poll-interval must be 0 or at least 900')
+ if os.environ.get('FINN_REQUIRE_AUTH')=='1' and len(os.environ.get('FINN_DEMO_PASSWORD',''))<16:
+  parser.error('FINN_REQUIRE_AUTH requires FINN_DEMO_PASSWORD with at least 16 characters')
+ def terminate(signum,frame):
+  raise KeyboardInterrupt
+ signal.signal(signal.SIGTERM,terminate)
  with db(): pass
  server=ThreadingHTTPServer((args.host,args.port),Handler)
  stop=threading.Event()
