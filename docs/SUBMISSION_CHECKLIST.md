@@ -9,10 +9,12 @@
 - [x] Connect digest to persistent live filings. Polling starts automatically with the server; push notifications are not implemented.
 - [x] Automated Chromium checks at mobile and desktop widths; mobile screenshot visually reviewed.
 - [ ] Test on a physical phone.
-- [ ] Create the prepared Render service, verify HTTPS/authentication and document survival after a hosted restart. Blueprint and local checks are ready; Render account access is still required.
+- [x] Deploy the user-selected free Render service and verify HTTPS, authentication, EOD prices and actual-company research.
+- [ ] Resolve NSE announcement failures from Render; first hosted poll returned no filings.
+- [ ] Durable hosted storage is unavailable on the chosen free plan; uploads and history may reset.
 - [x] Pushed to GitHub main; implementation and deployment preparation pass 27 automated tests.
 - [ ] Export/share the actual AI conversation; BUILD_HISTORY.md is only a summary.
 - [ ] Replace placeholders in covering note and verify every claim.
 - [ ] Send to the address in the brief, only after explicit user authorisation to send.
 
-The supplied brief states a deadline of Sunday, 1 November 2026, without a time or timezone. No deployment or email submission was performed. Git publication is recorded in BUILD_HISTORY.md.
+The supplied brief states a deadline of Sunday, 1 November 2026, without a time or timezone. The free Render deployment is live; no email submission was performed. Git publication is recorded in BUILD_HISTORY.md.
